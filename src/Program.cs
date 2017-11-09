@@ -11,11 +11,11 @@ namespace Kelor
     {
         static void Main(string[] args)
         {
-            var commands = typeof(IKelorCommand).Assembly.GetTypes()
+            var commands = typeof(KelorCommand).Assembly.GetTypes()
                                                          .Where(t => t.IsAbstract == false &&
                                                                      t.BaseType != null &&
                                                                      t.BaseType == typeof(KelorCommand))
-                                                         .Select(t => (IKelorCommand)Activator.CreateInstance(t))
+                                                         .Select(t => (KelorCommand)Activator.CreateInstance(t))
                                                          .ToArray();
 
             if (!args.Any())

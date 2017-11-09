@@ -48,6 +48,7 @@
     <Compile Include="Commands\IKelorCommand.cs" />
     <Compile Include="Commands\IKelorCommandParameter.cs" />
     <Compile Include="Commands\KelorCommand.cs" />
+    <Compile Include="Commands\Unzip.cs" />
     <Compile Include="Commands\ZipFolder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
