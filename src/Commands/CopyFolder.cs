@@ -13,6 +13,7 @@ namespace Kelor.Commands
 
         private string sourceFolder;
         private string target;
+        private IEnumerable<string> exceptFiles;
         private bool onlyContent;
 
         public CopyFolder()
@@ -21,6 +22,7 @@ namespace Kelor.Commands
             {
                 new KelorCommandParameter { Key = Constants.SOURCE, Description = "Folder to copy", Required = true },
                 new KelorCommandParameter { Key = Constants.TO, Description = "Folder destination", Required = true },
+                new KelorCommandParameter { Key = Constants.EXCEPT_FILES_RULES, Description = "Files cannot be copied", Required = false },
                 new KelorCommandParameter { Key = Constants.ONLY_CONTENT, Description = "Indicate only folder content must be copied", NotRequiredAValue = true }
             };
         }
@@ -52,12 +54,43 @@ namespace Kelor.Commands
                 return;
             }
 
+            var exceptFilesRule = parameteres.FirstOrDefault(p => p.Key == Constants.EXCEPT_FILES_RULES).Value;
+            exceptFiles = ExtractExceptFilesRules(exceptFilesRule);
+
             if (!onlyContent) {
                 var targetFolderName = Path.GetFileNameWithoutExtension(sourceFolder);
                 target = Path.Combine(target, targetFolderName);
             }
 
             CopyDirectoryAndFiles(sourceFolder, target);
+        }
+
+        private IEnumerable<string> ExtractExceptFilesRules(string exceptFilesRule)
+        {
+            var result = new List<string>();
+
+            if (String.IsNullOrWhiteSpace(exceptFilesRule))
+                return result;
+
+            result = exceptFilesRule.Split(',').Where(s => !String.IsNullOrWhiteSpace(s))
+                                               .Select(s => s.Trim())
+                                               .Select(s =>
+                                               {
+                                                   var r = s.Replace("[", "")
+                                                            .Replace("]", "");
+
+                                                   if (r.Contains("*"))
+                                                       r = r.Replace("*", "");
+
+                                                   return r;
+                                               }).ToList();
+
+            foreach (var r in result)
+            {
+                Console.WriteLine("Exclude file: ", r);
+            }
+
+            return result;
         }
 
         private void CopyDirectoryAndFiles(string source, string to)
@@ -80,7 +113,8 @@ namespace Kelor.Commands
 
         private void CopyFiles(string source, string to)
         {
-            var files = Directory.GetFiles(source).Select(f => new FileInfo(f));
+            var files = Directory.GetFiles(source).Select(f => new FileInfo(f))
+                                                  .Where(f => !exceptFiles.Any(e => f.Name.Contains(e)));
 
             foreach (var file in files)
             {

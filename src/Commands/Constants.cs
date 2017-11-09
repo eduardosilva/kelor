@@ -12,5 +12,6 @@ namespace Kelor.Commands
         public const string TO = "-d";
         public const string NAME = "-n";
         public const string ONLY_CONTENT = "-oc";
+        public const string EXCEPT_FILES_RULES = "-ef";
     }
 }

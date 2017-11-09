@@ -36,11 +36,12 @@ kelor zipfolder -s "c:\temp\mySite" -d "C:\Temp\VersioningArchive" -n "bkp.zip"
 ### Copy folder or only its content
 
 ```bash
-kelor copyfolder -s "C:\Temp\publish" -d "c:\temp\mySite" -oc
+kelor copyfolder -s "C:\Temp\publish" -d "c:\temp\mySite" -ef "[*.config, *.txt]" -oc 
 ```
 
 #### Parameters
 
 * **-s**: Folder to copy;
 * **-d**: Folder destination;
+* **-ef**: Files cannot be copied
 * **-oc**: Indicate only folder content must be copied;
