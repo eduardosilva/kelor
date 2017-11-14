@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 
 namespace Kelor.Commands
 {
-    public class Unzip : KelorCommand
+    public class UnZip : KelorCommand
     {
         private IEnumerable<KelorCommandParameter> parameters;
 
-        public Unzip()
+        public UnZip()
         {
-            parameters = new KelorCommandParameter[] { };
+            parameters = new[]
+            {
+                new KelorCommandParameter { Key = Constants.SOURCE, Description = "Zip path", Required = true },
+                new KelorCommandParameter { Key = Constants.TO, Description = "Files destination", Required = true }
+            };
         }
 
         public override string Code
@@ -33,7 +37,17 @@ namespace Kelor.Commands
 
         protected override void Execute()
         {
-            ZipFile.ExtractToDirectory("", "");
+            try
+            {
+                var zipFile = parameters.FirstOrDefault(p => p.Key == Constants.SOURCE).Value;
+                var pathTo = parameters.FirstOrDefault(p => p.Key == Constants.TO)?.Value;
+
+                ZipFile.ExtractToDirectory(zipFile, pathTo);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }
