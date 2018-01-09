@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -40,7 +41,25 @@ namespace Kelor.Commands
             try
             {
                 var zipFile = parameters.FirstOrDefault(p => p.Key == Constants.SOURCE).Value;
-                var pathTo = parameters.FirstOrDefault(p => p.Key == Constants.TO)?.Value;
+                var pathTo = parameters.FirstOrDefault(p => p.Key == Constants.TO).Value;
+
+                if (File.Exists(zipFile))
+                {
+                    Console.WriteLine("zip file not found");
+                    return;
+                }
+
+                if (!(Path.HasExtension(zipFile) && Path.GetExtension(zipFile) == ".zip"))
+                {
+                    Console.WriteLine("Invalid zip file");
+                    return;
+                }
+
+                if (Directory.Exists(pathTo))
+                {
+                    Console.WriteLine("Destination files not found");
+                    return;
+                }
 
                 ZipFile.ExtractToDirectory(zipFile, pathTo);
             }
